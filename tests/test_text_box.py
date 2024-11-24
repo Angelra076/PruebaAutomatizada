@@ -12,7 +12,7 @@ if not os.path.exists("screenshots"):
     os.makedirs("screenshots")
 
 # Configuración del WebDriver
-driver_path = "docs/chromedriver-win64/chromedriver.exe"  # Cambia la ruta si es necesario
+driver_path = "docs/chromedriver-win64/chromedriver.exe"  #Profesor cambia la ruta si es necesario
 service = Service(driver_path)
 driver = webdriver.Chrome(service=service)
 
