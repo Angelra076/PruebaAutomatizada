@@ -12,7 +12,7 @@ if not os.path.exists("screenshots"):
     os.makedirs("screenshots")
 
 # Configuración del WebDriver
-driver_path = "docs/chromedriver-win64/chromedriver.exe"  #Profesor cambia la ruta si es necesario
+driver_path = "docs/chromedriver-win64/chromedriver.exe"  # Cambia la ruta si es necesario
 service = Service(driver_path)
 driver = webdriver.Chrome(service=service)
 
@@ -47,7 +47,7 @@ try:
     driver.save_screenshot(screenshot_path)
     report_content += f'<p><img src="{screenshot_path}" alt="Página inicial"></p>'
 
-    # Llenar el formulario
+    # Llenar el formulario con datos estándar
     driver.find_element(By.ID, "userName").send_keys("John Doe")
     driver.find_element(By.ID, "userEmail").send_keys("johndoe@example.com")
     driver.find_element(By.ID, "currentAddress").send_keys("123 Main St, Springfield")
@@ -55,6 +55,16 @@ try:
     screenshot_path = "screenshots/02_formulario_llenado.png"
     driver.save_screenshot(screenshot_path)
     report_content += f'<p><img src="{screenshot_path}" alt="Formulario lleno"></p>'
+
+    # Verificar que los campos permiten caracteres especiales (Historia 6)
+    special_chars_name = "John @Doe #Test%"
+    special_chars_address = "123 Main St, Apt #4B %Springfield*"
+
+    driver.find_element(By.ID, "userName").clear()
+    driver.find_element(By.ID, "userName").send_keys(special_chars_name)
+
+    driver.find_element(By.ID, "currentAddress").clear()
+    driver.find_element(By.ID, "currentAddress").send_keys(special_chars_address)
 
     # Eliminar anuncios si existen
     ads_iframe = driver.find_elements(By.ID, "google_ads_iframe_/21849154601,22343295815/Ad.Plus-Anchor_0__container__")
@@ -78,10 +88,10 @@ try:
     output_current_address = driver.find_element(By.XPATH, "//p[@id='currentAddress']").text
     output_permanent_address = driver.find_element(By.XPATH, "//p[@id='permanentAddress']").text
 
-    assert "John Doe" in output_name
-    assert "johndoe@example.com" in output_email
-    assert "123 Main St, Springfield" in output_current_address
-    assert "456 Elm St, Shelbyville" in output_permanent_address
+    assert special_chars_name in output_name, "Los caracteres especiales no se reflejan correctamente en el campo de nombre."
+    assert special_chars_address in output_current_address, "Los caracteres especiales no se reflejan correctamente en la dirección."
+    assert "johndoe@example.com" in output_email, "El correo electrónico no coincide."
+    assert "456 Elm St, Shelbyville" in output_permanent_address, "La dirección permanente no coincide."
 
     report_content += """
     <h2>Resultados de la prueba:</h2>
